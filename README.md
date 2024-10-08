@@ -32,11 +32,11 @@ helm upgrade --install gnmic-cluster gnmic-cluster-chart/gnmic-cluster
 # Helm Chart Documentation
 # gnmic-cluster
 
-![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
+![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
 
 This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 
-**Homepage:** <https://github.com/workfloworchestrator/gnmic-cluster-chart>
+**Homepage:** <https://workfloworchestrator/gnmic-cluster-chart>
 
 ## Maintainers
 
