@@ -11,6 +11,7 @@ This project was co-funded by [GEANT](https://geant.org) in the GN5-1 WP6 Incuba
 ## Prerequisites
 
 - Kubernetes cluster
+- A strimzi operator and kafka cluster deployment within your k8s cluster [Strimzi](https://strimzi.io/downloads/)
 - Minimum CPU and RAM for 300 Routers and subscription to all metrics for processing +/- 2 billion events per day
 
 
