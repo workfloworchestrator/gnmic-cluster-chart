@@ -14,7 +14,7 @@ sources:
 dependencies:
 - name: redis
   version: 20.1.5
-  repository: "oci://registry-1.docker.io/bitnamicharts/redis"
+  repository: "oci://registry-1.docker.io/bitnamicharts/"
   condition: redis.enabled
 - name: reflector
   version: 7.1.288
