@@ -1,0 +1,253 @@
+# Default values for gnmic.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Number of replicas for the Collector and Relay statefulset. This will be overridden when autoscaling is activated
+replicaCount: 3
+
+image:
+  # -- Image repository.
+  repository: ghcr.io/openconfig/gnmic
+  # -- Image pull policy.
+  pullPolicy: Always
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+# --  Required for private image repository
+imagePullSecrets: []
+# -- Name override
+nameOverride: ""
+# -- Fullname override
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created, must be set to true when using the k8s locker
+  create: true
+  # --  Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# --  Any extra pod annotations
+podAnnotations: {}
+# -- Any extra pod annotations
+podLabels: {}
+
+# -- The Custom security context written in Yaml
+podSecurityContext: {}
+   # allowPrivilegeEscalation: false
+   # capabilities:
+   #   drop:
+   #   - ALL
+   # readOnlyRootFilesystem: true
+   # runAsNonRoot: true
+   # runAsUser: 1000
+
+
+service:
+  # -- The type of service
+  type: ClusterIP
+  # -- The port being exposed
+  port: 7890
+  # -- The extra service annotations to be compatible with clouds
+  annotations: {}
+  # -- The ExternalTrafficPolicy
+  externalTrafficPolicy: Cluster
+
+servicemonitor:
+  # -- For monitoring by Prometheus
+  enabled: false
+
+ingress:
+  # -- The ingress for the Api
+  enabled: false
+  # -- The ingress class name
+  className: ""
+  # -- Ingress annotations
+  annotations: {}
+  # -- The ingress host rules
+  hosts: []
+  #  - host: ""
+  #    paths:
+  #      - path: /
+  #        pathType: Prefix
+  # -- TLS rules
+  tls: []
+  #  - secretName: tls-routers-secret
+  #    hosts:
+  #      - ""
+
+resources:
+  # -- Resources for the consul deployment
+  consul: {}
+    # limits:
+    #   memory: 500Mi
+    #   cpu: 300m
+    # requests: {}
+    #   memory: 300Mi
+    #   cpu: 150m
+  # -- Resources for the collector, mandatory for functional autoscaling
+  collector: {}
+    # limits:
+    #   cpu: 2
+    # requests:
+    #  cpu: 1.5
+  # -- Resources for the relay, mandatory for functional autoscaling
+  relay: {}
+    # limits:
+    #   cpu: 2
+    # requests:
+    #   cpu: 1.5
+
+# -- Affinity for the k8s scheduler, this is a mapping per collector and relay
+affinity: {}
+#  collector:
+#    nodeAffinity:
+#      requiredDuringSchedulingIgnoredDuringExecution:
+#        nodeSelectorTerms:
+#        - matchExpressions:
+#          - key: workloads
+#            operator: In
+#            values:
+#            - streaming
+#  relay:
+#    nodeAffinity:
+#      requiredDuringSchedulingIgnoredDuringExecution:
+#        nodeSelectorTerms:
+#        - matchExpressions:
+#          - key: workloads
+#            operator: In
+#            values:
+#            - streaming
+
+# -- Tolerations for the k8s scheduler, this is a mapping per collector and relay
+tolerations: {}
+#  collector:
+#    - key: workloads
+#      operator: Equal
+#      value: streaming
+#      effect: NoSchedule
+#  relay:
+#    - key: workloads
+#      operator: Equal
+#      value: streaming
+#      effect: NoSchedule
+
+# -- Autscaling configuration, enabled by default to maximise the efficiency of collection.
+autoscaling:
+  # -- Autoscaling enabled
+  enabled: true
+  # -- 'consul' or 'k8s'
+  locker: consul
+  # -- Autoscaling lower bound
+  minReplicas: 4
+  # -- Autoscaling upper bound
+  maxReplicas: 30
+  # -- targetCPUUtilizationPercentage or targetMemoryUtilizationPercentage
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# -- gNMI server capabilities: https://gnmic.openconfig.net/user_guide/gnmi_server/
+server:
+  # -- Whether the server is enabled
+  enabled: true
+  # -- Default port
+  port: 57400
+  # -- Override of the default cache
+  cache:
+    # -- Only redis is supported
+    type: redis
+    # -- Redis cache address in URI form, e.g: redis-master.production.svc.cluster.local:6379
+    address: ""
+
+# -- Optional deployment of redis inside the namespace. This
+redis:
+  # -- Enable or disable usage of the Bitnami redis
+  enabled: false
+
+# -- Optional deployment of the secret reflector. This is necesarry when running the
+reflector:
+  enabled: false
+
+# -- Requires a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/
+kafka:
+  # -- Enabling this will create the strimzi artefacts to create the kafka objects in K8s. This will also configure the secret reflector so the kafka user secret can be
+  enabled: true
+  # -- Kafka Bootstrap address: fqdn + port. eg: kafka-bootstrap.production.svc.cluster.local:9094
+  bootstrap_server: ""
+  # -- The namespace where the kafka manifests need to be installed so the operator can create the user topics and rolebindings
+  kafka_namespace: ""
+  # -- The name of the cluster inside the
+  cluster: ""
+
+  # -- Kafka topic configuration
+  topic:
+  # -- Topic name
+    name: gnmic-telemetry
+    # -- Kafka Topic configuration
+    config: {}
+    #   retention.ms: "28800000"
+    # -- Minumum number of partitions (cruise control may scale to more)
+    partitions: 15
+    # -- Minimum number of replicas ( num(replicas) =< num(kafka_nodes)
+    replicas: 3
+  # -- The kafka user group
+  group: gnmic-collector
+  # -- The kafka user configuration
+  user:
+    name: gnmic
+    mechanism: scram-sha-512
+
+# -- Secret configuration
+secrets:
+  # -- Name of the secret
+  name: gnmic-secret
+  # -- Using a secret provider allows the user to inject secrets from a vault or cloud provider
+  secret_provider:
+    # -- Secret provider enabled
+    enabled: false
+    # -- K8s secret provider configuration
+    config:
+      # --  eg: azure
+      provider: ""
+      # -- Name of the keyvault
+      keyvault: ""
+      # -- Tenant id
+      tenantId: ""
+      # -- Secret with credentials to access the keyvault
+      nodePublishSecretRefName: ""
+    # -- List of objects to retrieve from the keyvault. These objects will be mapped to enviroment variables inside the containers
+    objects: []
+  # -- Usimg an opaque secret inside kubernets
+  opaque:
+    # -- Whether it is enabled
+    enabled: false
+    # -- Secret items
+    items: {}
+      # secrets in as a hashmap
+      # Key: Value
+
+# -- gNMIc configuration
+config:
+  # -- Global gNMIc Configuration extra keys can be added or removed according to: https://gnmic.openconfig.net/user_guide/configuration_file/#global-flags
+  global:
+    skip-verify: true
+    # -- An example of using environment value variables
+    username: ${GNMIC_USERNAME}
+    # -- An example of using environment value variables
+    password: ${GNMIC_PASSWORD}
+    debug: false
+    encoding: proto
+    format: event
+    gzip: false
+    api-server:
+      address: ":7890"
+      enable-metrics: true
+      debug: false
+
+  # -- Collector configuration, must be provided in yaml by following the instructions here: https://gnmic.openconfig.net/user_guide/subscriptions/
+  collector: {}
+  # -- Relay configuration, must be provided in yaml by following the instructions here: https://gnmic.openconfig.net/user_guide/outputs/
+  relay: {}

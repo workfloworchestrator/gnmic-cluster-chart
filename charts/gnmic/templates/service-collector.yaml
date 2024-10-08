@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gnmic.fullname" . }}-collector-gnmic-api
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+      name: gnmi-api-collector
+    {{- if .Values.server.enabled }}
+    - port: {{ .Values.server.port }}
+      targetPort: {{ .Values.server.port }}
+      protocol: TCP
+      name: gnmi-server
+    {{- end }}
+  selector:
+    {{- include "gnmic.selectorLabels" . | nindent 4 }}
+    instance: collector

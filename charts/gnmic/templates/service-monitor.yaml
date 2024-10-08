@@ -1,0 +1,19 @@
+{{- if .Values.servicemonitor.enabled }}
+{{- $fullName := include "gnmic.fullname" . -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "gnmic.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: gnmi-api
+      path: /metrics
+  {{- end }}

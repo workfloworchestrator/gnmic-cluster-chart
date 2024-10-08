@@ -1,0 +1,16 @@
+{{- $replicas := int (.Values.replicaCount) -}}
+{{- if gt $replicas 5 -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.nameOverride }}
+  annotations:
+    {{- include "gnmic.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.nameOverride }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  minAvailable: 4
+{{- end}}

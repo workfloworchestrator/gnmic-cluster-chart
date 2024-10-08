@@ -1,0 +1,54 @@
+{{- $fullName := include "gnmic.fullname" . -}}
+{{- if .Values.autoscaling.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $fullName }}-role
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - coordination.k8s.io
+  - ""
+  resources:
+  - leases
+  - endpoints
+  verbs:
+    - create
+    - get
+    - watch
+    - list
+    - update
+    - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  verbs:
+   - get
+   - list
+   - watch
+{{- end }}
+{{- if .Values.kafka.kafka_namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $fullName }}-role-secret-access
+  namespace: {{ .Values.kafka.kafka_namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  resourceNames:
+    - {{ .Values.kafka.user.name }}
+  verbs:
+    - get
+    - watch
+    - list
+{{- end}}

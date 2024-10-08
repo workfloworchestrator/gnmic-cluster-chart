@@ -1,0 +1,36 @@
+{{- $fullName := include "gnmic.fullname" . -}}
+{{- if .Values.autoscaling.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $fullName }}-role-binding
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $fullName }}-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "gnmic.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if .Values.kafka.kafka_namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $fullName }}-rolebinding-secret-access
+  namespace: {{ .Values.kafka.kafka_namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "gnmic.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $fullName }}-role-secret-access
+{{- end}}

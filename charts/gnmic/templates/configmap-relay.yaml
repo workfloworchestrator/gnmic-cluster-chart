@@ -1,0 +1,32 @@
+{{- $fullName := include "gnmic.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    {{- include "gnmic.labels" . | nindent 4 }}
+  name: {{ $fullName }}-relay
+  namespace: {{ .Release.Namespace }}
+{{- with .Values.config.global }}
+data:
+  gnmic.yml: |
+    {{- toYaml . | nindent 6 }}
+{{- end }}
+{{- with .Values.config.relay }}
+    {{- toYaml . | nindent 6 }}
+{{- end }}
+{{- if and .Values.autoscaling.enabled (eq .Values.autoscaling.locker "k8s") }}
+      api: ":7890"
+      clustering:
+        cluster-name: {{ $fullName }}-relay
+        locker:
+          type: k8s
+          namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if and .Values.autoscaling.enabled (eq .Values.autoscaling.locker "consul") }}
+      api: ":7890"
+      clustering:
+        cluster-name: {{ $fullName }}-relay
+        locker:
+          type: consul
+          address: {{ $fullName }}-consul-svc:8500
+{{- end }}

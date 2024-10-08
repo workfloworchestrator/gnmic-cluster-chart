@@ -1,0 +1,136 @@
+{{- $fullName := include "gnmic.fullname" . -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullName }}-relay
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "gnmic.selectorLabels" . | nindent 6 }}
+      instance: relay
+  serviceName: {{ $fullName }}-relay-gnmic-api
+  template:
+    metadata:
+      annotations:
+         checksum/config: {{ include (print $.Template.BasePath "/configmap-relay.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gnmic.labels" . | nindent 8 }}
+        instance: relay
+  {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.tolerations.relay }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity.relay }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gnmic.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "/app/gnmic"
+            - "subscribe"
+            - "--config"
+            - "/app/config.yml"
+          ports:
+            - name: gnmi-api
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          {{- if or .Values.autoscaling.enabled .Values.kafka.enabled }}
+          env:
+            {{- if .Values.autoscaling.enabled }}
+            - name: GNMIC_CLUSTERING_INSTANCE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: GNMIC_CLUSTERING_SERVICE_ADDRESS
+              value: "$(GNMIC_CLUSTERING_INSTANCE_NAME).{{ $fullName }}-relay-gnmic-api.{{ .Release.Namespace }}.svc.cluster.local"
+            {{- end }}
+            {{- if .Values.kafka.enabled }}
+            - name: KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ .Values.kafka.user.name }}
+            - name: KAFKA_USERNAME
+              value: {{ .Values.kafka.user.name }}
+            - name: KAFKA_BOOSTRAP_SERVER
+              value: {{ .Values.kafka.bootstrap_server }}
+            - name: KAFKA_TOPIC
+              value: {{ .Values.kafka.topic.name }}
+            - name: KAFKA_GROUP
+              value: {{ .Values.kafka.group }}-relay
+            - name: KAFKA_AUTH_MECH
+              value: {{ upper .Values.kafka.user.mechanism }}
+            {{- end }}
+          {{- end }}
+          {{- if or .Values.secrets.opaque.enabled .Values.secrets.secret_provider.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secrets.name }}-{{ .Release.Namespace }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/healthz
+              port: gnmi-api
+          readinessProbe:
+            httpGet:
+              path: /api/v1/healthz
+              port: gnmi-api
+          resources:
+            {{- toYaml .Values.resources.relay | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.secrets.secret_provider.enabled }}
+            - name: secret-volume
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+            {{- end }}
+            - name: relay-config
+              mountPath: /app/config.yml
+              subPath: config.yml
+              readOnly: true
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        {{- if .Values.secrets.secret_provider.enabled }}
+        - name: secret-volume
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Release.Name }}-secretproviderclass
+            nodePublishSecretRef:
+              name: {{ .Values.secrets.secret_provider.config.nodePublishSecretRefName }}
+        {{- end }}
+        - name: relay-config
+          configMap:
+            name: {{ $fullName }}-relay
+            items:
+              - key: gnmic.yml
+                path: config.yml
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

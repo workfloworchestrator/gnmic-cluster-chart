@@ -1,0 +1,18 @@
+{{- $fullName := include "gnmic.fullname" . -}}
+{{- if eq .Values.autoscaling.locker "consul" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-consul-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+    app: {{ $fullName }}-consul
+spec:
+  ports:
+  - name: http
+    port: 8500
+    protocol: TCP
+  selector:
+    app: {{ $fullName }}-consul
+  {{- end }}

@@ -1,0 +1,42 @@
+{{- $fullName := include "gnmic.fullname" . -}}
+{{- if eq .Values.autoscaling.locker "consul" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul-deploy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+    app: {{ $fullName }}-consul
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-consul
+  template:
+    metadata:
+      labels:
+        {{- include "gnmic.labels" . | nindent 8 }}
+        app: {{ $fullName }}-consul
+    spec:
+      containers:
+      - args:
+        - "agent"
+        - "-server"
+        - "-ui"
+        - "-node=server-1"
+        - "-bootstrap-expect=1"
+        - "-client=0.0.0.0"
+        image: hashicorp/consul
+        imagePullPolicy: Always
+        name: {{ $fullName }}-consul
+        ports:
+        - containerPort: 8500
+          name: consul
+          protocol: TCP
+        - containerPort: 8301
+          name: gossip
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.resources.consul | nindent 12 }}
+{{- end }}

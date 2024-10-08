@@ -1,0 +1,27 @@
+{{- if .Values.kafka.enabled }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+    {{- if .Values.kafka.cluster }}
+    strimzi.io/cluster:  {{ .Values.kafka.cluster }}
+    {{- else }}
+    strimzi.io/cluster:  {{ .Release.Namespace }}-kafka
+    {{- end }}
+  name: {{ .Values.kafka.topic.name }}
+  {{- if .Values.kafka.kafka_namespace }}
+  namespace: {{ .Values.kafka.kafka_namespace }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+spec:
+  {{- if .Values.kafka.topic.config }}
+  config:
+    {{- range $key, $value := .Values.kafka.topic.config }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  partitions: {{ .Values.kafka.topic.partitions }}
+  replicas: {{ .Values.kafka.topic.replicas }}
+  {{- end }}
