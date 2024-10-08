@@ -20,6 +20,15 @@ This project was co-funded by [GEANT](https://geant.org) in the GN5-1 WP6 Incuba
 
 
 
+## Installation
+
+```bash
+helm repo add gnmic-cluster-chart https://workfloworchestrator.org/gnmic-cluster-chart/
+helm repo update
+helm upgrade --install gnmic-cluster gnmic-cluster-chart/gnmic-cluster
+```
+
+
 # Helm Chart Documentation
 <!-- include (charts/gnmic/README.md) -->
 

@@ -1,10 +1,10 @@
 # gnmic-cluster
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
 
 This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 
-**Homepage:** <https://github.com/workfloworchestrator/gnmic-cluster>
+**Homepage:** <https://github.com/workfloworchestrator/gnmic-cluster-chart>
 
 ## Maintainers
 
@@ -14,14 +14,14 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 
 ## Source Code
 
-* <https://github.com/workfloworchestrator/gnmic-cluster/tree/main/charts/gnmic>
+* <https://github.com/workfloworchestrator/gnmic-cluster-chart/tree/main/charts/gnmic>
 
 ## Requirements
 
 | Repository | Name | Version |
 |------------|------|---------|
 | https://emberstack.github.io/helm-charts | reflector | 7.1.288 |
-| oci://registry-1.docker.io/bitnamicharts/redis | redis | 20.1.5 |
+| oci://registry-1.docker.io/bitnamicharts | redis | 20.1.5 |
 
 ## Values
 
