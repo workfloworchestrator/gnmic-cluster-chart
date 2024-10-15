@@ -2,7 +2,7 @@ apiVersion: v2
 name: gnmic-cluster
 description: This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 type: application
-version: 0.1.3
+version: 0.1.4
 appVersion: "v0.38.3"
 home: https://workfloworchestrator/gnmic-cluster-chart
 maintainers:
@@ -19,4 +19,4 @@ dependencies:
 - name: reflector
   version: 7.1.288
   repository: "https://emberstack.github.io/helm-charts"
-  condition: kafka.enabled
+  condition: reflector.enabled,kafka.enabled
