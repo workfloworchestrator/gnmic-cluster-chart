@@ -26,6 +26,7 @@ data:
       api: ":7890"
       clustering:
         cluster-name: {{ $fullName }}-relay
+        leader-wait-timer: 60s
         locker:
           type: consul
           address: {{ $fullName }}-consul-svc:8500
