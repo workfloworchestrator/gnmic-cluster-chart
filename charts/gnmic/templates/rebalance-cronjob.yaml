@@ -17,6 +17,7 @@ spec:
             {{- include "gnmic.labels" . | nindent 12 }}
           name: {{ include "gnmic.fullname" .}}-rebalance-cronjob
           {{- with .Values.cronjob.annotations }}
+          annotations:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         spec:
@@ -27,7 +28,6 @@ spec:
             command: ["/bin/sh","-c"]
             imagePullPolicy: IfNotPresent
             name: {{ include "gnmic.fullname" . }}-rebalance
-          image: alpine
           restartPolicy: Never
   schedule: "* * * * *"
 {{- end }}
