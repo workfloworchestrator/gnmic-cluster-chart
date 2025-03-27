@@ -1,0 +1,31 @@
+{{- if .Values.autoscaling.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "gnmic.fullname" . }}-rebalance-cronjob
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gnmic.labels" . | nindent 4 }}
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "gnmic.labels" . | nindent 12 }}
+          name: {{ include "gnmic.fullname" .}}-rebalance-cronjob
+        spec:
+          containers:
+          - args:
+            - -X
+            - POST
+            - {{ include "gnmic.fullname" . }}-collector-gnmic-api:{{ .Values.service.port }}/api/v1/cluster/rebalance
+            image: alpine/curl
+            imagePullPolicy: IfNotPresent
+            name: {{ include "gnmic.fullname" . }}-rebalance
+          image: alpine/curl
+          restartPolicy: Never
+  schedule: "* * * * *"
+{{- end }}
