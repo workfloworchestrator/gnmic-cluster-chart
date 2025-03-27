@@ -101,14 +101,14 @@ resources:
     # requests:
     #   cpu: 1.5
 
-# -- Extra annotations for the Cronjob
 cronjob:
+  # -- Extra annotations for the Cronjob
   annotations: {}
-  # key: value
+    # key: value
   # -- Cronjob schedule
   schedule: '* * * * *'
-  # 0 1 * * *
-  # @weekly
+    # 0 1 * * *
+    # @weekly
 # -- Affinity for the k8s scheduler, this is a mapping per collector and relay
 affinity: {}
 #  collector:

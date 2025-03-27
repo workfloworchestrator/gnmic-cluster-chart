@@ -1,6 +1,6 @@
 # gnmic-cluster
 
-![Version: 0.1.13](https://img.shields.io/badge/Version-0.1.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
+![Version: 0.1.14](https://img.shields.io/badge/Version-0.1.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
 
 This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 
@@ -40,7 +40,7 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | config.global.password | string | `"${GNMIC_PASSWORD}"` | An example of using environment value variables |
 | config.global.username | string | `"${GNMIC_USERNAME}"` | An example of using environment value variables |
 | config.relay | object | `{}` | Relay configuration, must be provided in yaml by following the instructions here: https://gnmic.openconfig.net/user_guide/outputs/ |
-| cronjob | object | `{"annotations":{},"schedule":"* * * * *"}` | Extra annotations for the Cronjob |
+| cronjob.annotations | object | `{}` | Extra annotations for the Cronjob |
 | cronjob.schedule | string | `"* * * * *"` | Cronjob schedule |
 | fullnameOverride | string | `""` | Fullname override |
 | image.pullPolicy | string | `"Always"` | Image pull policy. |
