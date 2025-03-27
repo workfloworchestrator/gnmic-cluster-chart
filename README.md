@@ -33,7 +33,7 @@ helm upgrade --install gnmic-cluster gnmic-cluster-chart/gnmic-cluster
 # Helm Chart Documentation
 # gnmic-cluster
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
+![Version: 0.1.6](https://img.shields.io/badge/Version-0.1.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
 
 This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 
@@ -73,6 +73,7 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | config.global.password | string | `"${GNMIC_PASSWORD}"` | An example of using environment value variables |
 | config.global.username | string | `"${GNMIC_USERNAME}"` | An example of using environment value variables |
 | config.relay | object | `{}` | Relay configuration, must be provided in yaml by following the instructions here: https://gnmic.openconfig.net/user_guide/outputs/ |
+| cronjob | object | `{"annotations":{}}` | Extra annotations for the Cronjob |
 | fullnameOverride | string | `""` | Fullname override |
 | image.pullPolicy | string | `"Always"` | Image pull policy. |
 | image.repository | string | `"ghcr.io/openconfig/gnmic"` | Image repository. |

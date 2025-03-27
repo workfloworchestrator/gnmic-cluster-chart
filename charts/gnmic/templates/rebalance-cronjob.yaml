@@ -16,16 +16,18 @@ spec:
           labels:
             {{- include "gnmic.labels" . | nindent 12 }}
           name: {{ include "gnmic.fullname" .}}-rebalance-cronjob
+          {{- with .Values.cronjob.annotations }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         spec:
           containers:
+          command: ["/bin/sh","-c"]
           - args:
-            - -X
-            - POST
-            - {{ include "gnmic.fullname" . }}-collector-gnmic-api:{{ .Values.service.port }}/api/v1/cluster/rebalance
-            image: alpine/curl
+            - apk add jq curl && curl -s -X POST `curl -s {{ include "gnmic.fullname" . }}-collector-gnmic-api:{{ .Values.service.port }}/api/v1/cluster |  jq .leader | tr -d '"' | {read x; echo "${x}.{{ include "gnmic.fullname" . }}"}`:{{ .Values.service.port }}/api/v1/cluster/rebalance
+            image: alpine
             imagePullPolicy: IfNotPresent
             name: {{ include "gnmic.fullname" . }}-rebalance
-          image: alpine/curl
+          image: alpine
           restartPolicy: Never
   schedule: "* * * * *"
 {{- end }}
