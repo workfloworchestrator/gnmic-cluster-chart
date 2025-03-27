@@ -29,5 +29,5 @@ spec:
             imagePullPolicy: IfNotPresent
             name: {{ include "gnmic.fullname" . }}-rebalance
           restartPolicy: Never
-  schedule: "* * * * *"
+  schedule: {{ .Values.cronjob.schedule  }}
 {{- end }}

@@ -105,6 +105,10 @@ resources:
 cronjob:
   annotations: {}
   # key: value
+  # -- Cronjob schedule
+  schedule: '* * * * *'
+  # 0 1 * * *
+  # @weekly
 # -- Affinity for the k8s scheduler, this is a mapping per collector and relay
 affinity: {}
 #  collector:
