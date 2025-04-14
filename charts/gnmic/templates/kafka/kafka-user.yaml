@@ -33,7 +33,7 @@ spec:
       - resource:
           type: topic
           name: {{ .Values.kafka.topic.name }}
-          patternType: literal
+          patternType: {{ .Values.kafka.topic.patternType }}
         operations:
           - Describe
           - Create

@@ -192,8 +192,10 @@ kafka:
 
   # -- Kafka topic configuration
   topic:
-  # -- Topic name
+    # -- Topic name
     name: gnmic-telemetry
+    # -- Literal or Prefix
+    patternType: literal
     # -- Kafka Topic configuration
     config: {}
     #   retention.ms: "28800000"
