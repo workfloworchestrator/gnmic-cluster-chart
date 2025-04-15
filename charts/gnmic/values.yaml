@@ -165,10 +165,9 @@ server:
   port: 57400
   # -- Override of the default cache
   cache:
-    # -- Only redis is supported
+    # -- Supports a cache Structure as defined here: https://gnmic.openconfig.net/user_guide/caching/ Default is redis
     type: redis
-    # -- Redis cache address in URI form, e.g: redis-master.production.svc.cluster.local:6379
-    address: ""
+
 
 # -- Optional deployment of redis inside the namespace. This
 redis:

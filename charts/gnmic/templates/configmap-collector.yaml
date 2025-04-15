@@ -36,6 +36,7 @@ data:
         address: ":{{ .Values.server.port }}"
         debug: false
         cache:
-          type: {{ .Values.server.cache.type }}
-          address: {{ .Values.server.cache.address }}
-          {{- end }}
+        {{- with .Values.server.cache }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+{{- end }}
