@@ -1,6 +1,6 @@
 # gnmic-cluster
 
-![Version: 0.1.14](https://img.shields.io/badge/Version-0.1.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
+![Version: 0.1.17](https://img.shields.io/badge/Version-0.1.17-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
 
 This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 
@@ -52,16 +52,17 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | ingress.enabled | bool | `false` | The ingress for the Api |
 | ingress.hosts | list | `[]` | The ingress host rules |
 | ingress.tls | list | `[]` | TLS rules |
-| kafka | object | `{"bootstrap_server":"","cluster":"","enabled":true,"group":"gnmic-collector","kafka_namespace":"","topic":{"config":{},"name":"gnmic-telemetry","partitions":15,"replicas":3},"user":{"mechanism":"scram-sha-512","name":"gnmic"}}` | Requires a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/ |
+| kafka | object | `{"bootstrap_server":"","cluster":"","enabled":true,"group":"gnmic-collector","kafka_namespace":"","topic":{"config":{},"name":"gnmic-telemetry","partitions":15,"patternType":"literal","replicas":3},"user":{"mechanism":"scram-sha-512","name":"gnmic"}}` | Requires a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/ |
 | kafka.bootstrap_server | string | `""` | Kafka Bootstrap address: fqdn + port. eg: kafka-bootstrap.production.svc.cluster.local:9094 |
 | kafka.cluster | string | `""` | The name of the cluster inside the |
 | kafka.enabled | bool | `true` | Enabling this will create the strimzi artefacts to create the kafka objects in K8s. This will also configure the secret reflector so the kafka user secret can be |
 | kafka.group | string | `"gnmic-collector"` | The kafka user group |
 | kafka.kafka_namespace | string | `""` | The namespace where the kafka manifests need to be installed so the operator can create the user topics and rolebindings |
-| kafka.topic | object | `{"config":{},"name":"gnmic-telemetry","partitions":15,"replicas":3}` | Kafka topic configuration |
+| kafka.topic | object | `{"config":{},"name":"gnmic-telemetry","partitions":15,"patternType":"literal","replicas":3}` | Kafka topic configuration |
 | kafka.topic.config | object | `{}` | Kafka Topic configuration |
 | kafka.topic.name | string | `"gnmic-telemetry"` | Topic name |
 | kafka.topic.partitions | int | `15` | Minumum number of partitions (cruise control may scale to more) |
+| kafka.topic.patternType | string | `"literal"` | Literal or Prefix |
 | kafka.topic.replicas | int | `3` | Minimum number of replicas ( num(replicas) =< num(kafka_nodes) |
 | kafka.user | object | `{"mechanism":"scram-sha-512","name":"gnmic"}` | The kafka user configuration |
 | nameOverride | string | `""` | Name override |
@@ -88,10 +89,9 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | secrets.secret_provider.config.tenantId | string | `""` | Tenant id |
 | secrets.secret_provider.enabled | bool | `false` | Secret provider enabled |
 | secrets.secret_provider.objects | list | `[]` | List of objects to retrieve from the keyvault. These objects will be mapped to enviroment variables inside the containers |
-| server | object | `{"cache":{"address":"","type":"redis"},"enabled":true,"port":57400}` | gNMI server capabilities: https://gnmic.openconfig.net/user_guide/gnmi_server/ |
-| server.cache | object | `{"address":"","type":"redis"}` | Override of the default cache |
-| server.cache.address | string | `""` | Redis cache address in URI form, e.g: redis-master.production.svc.cluster.local:6379 |
-| server.cache.type | string | `"redis"` | Only redis is supported |
+| server | object | `{"cache":{"type":"redis"},"enabled":true,"port":57400}` | gNMI server capabilities: https://gnmic.openconfig.net/user_guide/gnmi_server/ |
+| server.cache | object | `{"type":"redis"}` | Override of the default cache |
+| server.cache.type | string | `"redis"` | Supports a cache Structure as defined here: https://gnmic.openconfig.net/user_guide/caching/ Default is redis |
 | server.enabled | bool | `true` | Whether the server is enabled |
 | server.port | int | `57400` | Default port |
 | service.annotations | object | `{}` | The extra service annotations to be compatible with clouds |
