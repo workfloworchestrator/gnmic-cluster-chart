@@ -90,7 +90,7 @@ spec:
               value: {{ upper .Values.kafka.user.mechanism }}
             {{- end }}
           {{- end }}
-          {{- if or .Values.secrets.opaque.enabled  .Values.secrets.secret_provider.enabled }}
+          {{- if or eq .Values.secrets.opaque.enabled true eq .Values.secrets.secret_provider.enabled true }}
           envFrom:
             - secretRef:
                 name: {{ .Values.secrets.name }}
@@ -106,7 +106,7 @@ spec:
           resources:
             {{- toYaml .Values.resources.collector | nindent 12 }}
           volumeMounts:
-            {{- if .Values.secrets.secret_provider.enabled }}
+            {{- if eq .Values.secrets.secret_provider.enabled true }}
             - name: secret-volume
               mountPath: "/mnt/secrets-store"
               readOnly: true
@@ -119,7 +119,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-        {{- if .Values.secrets.secret_provider.enabled }}
+        {{- if eq .Values.secrets.secret_provider.enabled true }}
         - name: secret-volume
           csi:
             driver: secrets-store.csi.k8s.io
