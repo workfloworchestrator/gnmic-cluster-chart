@@ -62,7 +62,7 @@ spec:
             - name: gnmi-server
               containerPort: {{ .Values.server.port }}
             {{- end }}
-          {{- if or .Values.autoscaling.enabled .Values.kafka.enabled }}
+          {{- if or (eq .Values.autoscaling.enabled true) (eq .Values.kafka.enabled true) }}
           env:
             {{- if .Values.autoscaling.enabled }}
             - name: GNMIC_CLUSTERING_INSTANCE_NAME
@@ -90,7 +90,7 @@ spec:
               value: {{ upper .Values.kafka.user.mechanism }}
             {{- end }}
           {{- end }}
-          {{- if or eq .Values.secrets.opaque.enabled true eq .Values.secrets.secret_provider.enabled true }}
+          {{- if or (eq .Values.secrets.opaque.enabled true) (eq .Values.secrets.secret_provider.enabled true) }}
           envFrom:
             - secretRef:
                 name: {{ .Values.secrets.name }}
