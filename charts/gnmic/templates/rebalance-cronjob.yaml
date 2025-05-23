@@ -29,5 +29,12 @@ spec:
             imagePullPolicy: IfNotPresent
             name: {{ include "gnmic.fullname" . }}-rebalance
           restartPolicy: Never
+          {{- with .Values.cronjob.podDnsPolicy }}
+          dnsPolicy: {{ . }}
+          {{- end }}
+          {{- with .Values.cronjob.podDnsConfig }}
+          dnsConfig:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
   schedule: "{{ .Values.cronjob.schedule  }}"
 {{- end }}
