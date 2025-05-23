@@ -109,6 +109,22 @@ cronjob:
   schedule: '* * * * *'
     # 0 1 * * *
     # @weekly
+
+  # -- Cronjob podDnsPolicy
+  # For more information, see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  podDnsPolicy: "None"
+
+  # -- Cronjob podDnsConfig, works with any DNS POLICY settings. However, when a Pod's dnsPolicy is set to "None", the dnsConfig field has to be specified.
+  # see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
+  podDnsConfig:
+    # nameservers:
+    # - 1.1.1.1
+    # - 8.8.8.8
+    # searches: []
+    # options:
+    # - name: ndots
+    #   value: "2"
+
 # -- Affinity for the k8s scheduler, this is a mapping per collector and relay
 affinity: {}
 #  collector:
