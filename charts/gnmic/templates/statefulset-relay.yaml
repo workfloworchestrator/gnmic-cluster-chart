@@ -88,8 +88,8 @@ spec:
           {{- end }}
           {{- if or .Values.secrets.opaque.enabled .Values.secrets.secret_provider.enabled }}
           envFrom:
-            - secretRef:
-                name: {{ .Values.secrets.name }}-{{ .Release.Namespace }}
+          - secretRef:
+              name: {{ .Values.secrets.name }}
           {{- end }}
           livenessProbe:
             httpGet:
