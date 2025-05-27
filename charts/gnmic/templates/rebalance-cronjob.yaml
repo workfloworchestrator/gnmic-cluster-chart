@@ -16,6 +16,8 @@ spec:
           labels:
             {{- include "gnmic.labels" . | nindent 12 }}
             {{- with .Values.cronjob.labels }}
+            {{- toYaml . | nindent 6 }}
+            {{- end }}
           name: {{ include "gnmic.fullname" .}}-rebalance-cronjob
           {{- with .Values.cronjob.annotations }}
           annotations:
