@@ -15,6 +15,7 @@ spec:
         metadata:
           labels:
             {{- include "gnmic.labels" . | nindent 12 }}
+            {{- with .Values.cronjob.labels }}
           name: {{ include "gnmic.fullname" .}}-rebalance-cronjob
           {{- with .Values.cronjob.annotations }}
           annotations:

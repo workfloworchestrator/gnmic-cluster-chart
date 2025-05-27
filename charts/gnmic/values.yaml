@@ -105,6 +105,10 @@ cronjob:
   # -- Extra annotations for the Cronjob
   annotations: {}
     # key: value
+
+  # -- Extra labels for the Cronjob
+  labels: {}
+    # key: value
   # -- Cronjob schedule
   schedule: '* * * * *'
     # 0 1 * * *
