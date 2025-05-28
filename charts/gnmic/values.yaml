@@ -35,6 +35,12 @@ podAnnotations: {}
 # -- Any extra pod annotations
 podLabels: {}
 
+# -- The proxy environment variables to be injected into the containers
+proxy:
+  http: ""         # e.g., http://proxy.local:3128
+  https: ""        # e.g., http://proxy.local:3128
+  noProxy: "127.0.0.1,localhost,.svc,.cluster.local"
+
 # -- The Custom security context written in Yaml
 podSecurityContext: {}
    # allowPrivilegeEscalation: false
