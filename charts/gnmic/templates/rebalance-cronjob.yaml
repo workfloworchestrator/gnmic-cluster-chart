@@ -15,6 +15,9 @@ spec:
         metadata:
           labels:
             {{- include "gnmic.labels" . | nindent 12 }}
+            {{- with .Values.cronjob.labels }}
+            {{- toYaml . | nindent 6 }}
+            {{- end }}
           name: {{ include "gnmic.fullname" .}}-rebalance-cronjob
           {{- with .Values.cronjob.annotations }}
           annotations:
@@ -29,5 +32,25 @@ spec:
             imagePullPolicy: IfNotPresent
             name: {{ include "gnmic.fullname" . }}-rebalance
           restartPolicy: Never
+          env:
+            {{- if .Values.proxy.http }}
+            - name: HTTP_PROXY
+              value: {{ .Values.proxy.http | quote }}
+            {{- end }}
+            {{- if .Values.proxy.https }}
+            - name: HTTPS_PROXY
+              value: {{ .Values.proxy.https | quote }}
+            {{- end }}
+            {{- if .Values.proxy.noProxy }}
+            - name: NO_PROXY
+              value: {{ .Values.proxy.noProxy | quote }}
+            {{- end }}
+          {{- with .Values.cronjob.podDnsPolicy }}
+          dnsPolicy: {{ . }}
+          {{- end }}
+          {{- with .Values.cronjob.podDnsConfig }}
+          dnsConfig:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
   schedule: "{{ .Values.cronjob.schedule  }}"
 {{- end }}
