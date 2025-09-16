@@ -122,7 +122,7 @@ cronjob:
 
   # -- Cronjob podDnsPolicy
   # For more information, see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
-  podDnsPolicy: "None"
+  podDnsPolicy: "ClusterFirst"
 
   # -- Cronjob podDnsConfig, works with any DNS POLICY settings. However, when a Pod's dnsPolicy is set to "None", the dnsConfig field has to be specified.
   # see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config

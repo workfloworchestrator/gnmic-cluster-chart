@@ -2,8 +2,8 @@ apiVersion: v2
 name: gnmic-cluster
 description: This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 type: application
-version: 0.2.1
-appVersion: "v0.38.3"
+version: 0.2.2
+appVersion: "v0.41.0"
 home: https://workfloworchestrator/gnmic-cluster-chart
 maintainers:
 - name: Workflow Orchestrator Programme
