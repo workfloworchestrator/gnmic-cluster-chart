@@ -3,6 +3,33 @@ entries:
   gnmic-cluster:
   - apiVersion: v2
     appVersion: v0.41.0
+    created: "2025-10-02T13:47:42.190805104Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 20.1.5
+    - condition: reflector.enabled,kafka.enabled
+      name: reflector
+      repository: https://emberstack.github.io/helm-charts
+      version: 7.1.288
+    description: This chart deploys a gNMIc cluster. This application enables users
+      to stream telemetry from gNMI capable routers.
+    digest: 8616575f29a367985cac873cac6e7347bb415cc61f784bb7f4d608e95292406c
+    home: https://workfloworchestrator/gnmic-cluster-chart
+    maintainers:
+    - email: workfloworchestrator.board@commonsconservancy.org
+      name: Workflow Orchestrator Programme
+      url: https://workfloworchestrator.org
+    name: gnmic-cluster
+    sources:
+    - https://github.com/workfloworchestrator/gnmic-cluster-chart/tree/main/charts/gnmic
+    type: application
+    urls:
+    - https://github.com/workfloworchestrator/gnmic-cluster-chart/releases/download/gnmic-cluster-0.2.3/gnmic-cluster-0.2.3.tgz
+    version: 0.2.3
+  - apiVersion: v2
+    appVersion: v0.41.0
     created: "2025-09-16T06:38:33.967665113Z"
     dependencies:
     - condition: redis.enabled
@@ -568,4 +595,4 @@ entries:
     urls:
     - https://github.com/workfloworchestrator/gnmic-cluster-chart/releases/download/gnmic-cluster-0.1.0/gnmic-cluster-0.1.0.tgz
     version: 0.1.0
-generated: "2025-09-16T06:38:33.967797702Z"
+generated: "2025-10-02T13:47:42.19094222Z"
