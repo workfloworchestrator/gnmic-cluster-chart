@@ -1,4 +1,4 @@
-{{- if .Values.kafka.enabled }}
+{{- if and .Values.kafka.enabled (not .Values.kafka.external) }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:

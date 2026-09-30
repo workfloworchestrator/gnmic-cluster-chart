@@ -1,6 +1,6 @@
 # gnmic-cluster
 
-![Version: 0.1.17](https://img.shields.io/badge/Version-0.1.17-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.38.3](https://img.shields.io/badge/AppVersion-v0.38.3-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.41.0](https://img.shields.io/badge/AppVersion-v0.41.0-informational?style=flat-square)
 
 This chart deploys a gNMIc cluster. This application enables users to stream telemetry from gNMI capable routers.
 
@@ -41,6 +41,9 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | config.global.username | string | `"${GNMIC_USERNAME}"` | An example of using environment value variables |
 | config.relay | object | `{}` | Relay configuration, must be provided in yaml by following the instructions here: https://gnmic.openconfig.net/user_guide/outputs/ |
 | cronjob.annotations | object | `{}` | Extra annotations for the Cronjob |
+| cronjob.labels | object | `{}` | Extra labels for the Cronjob |
+| cronjob.podDnsConfig | string | `nil` | Cronjob podDnsConfig, works with any DNS POLICY settings. However, when a Pod's dnsPolicy is set to "None", the dnsConfig field has to be specified. see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config |
+| cronjob.podDnsPolicy | string | `"ClusterFirst"` | Cronjob podDnsPolicy For more information, see https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy |
 | cronjob.schedule | string | `"* * * * *"` | Cronjob schedule |
 | fullnameOverride | string | `""` | Fullname override |
 | image.pullPolicy | string | `"Always"` | Image pull policy. |
@@ -52,23 +55,26 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | ingress.enabled | bool | `false` | The ingress for the Api |
 | ingress.hosts | list | `[]` | The ingress host rules |
 | ingress.tls | list | `[]` | TLS rules |
-| kafka | object | `{"bootstrap_server":"","cluster":"","enabled":true,"group":"gnmic-collector","kafka_namespace":"","topic":{"config":{},"name":"gnmic-telemetry","partitions":15,"patternType":"literal","replicas":3},"user":{"mechanism":"scram-sha-512","name":"gnmic"}}` | Requires a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/ |
+| kafka | object | `{"bootstrap_server":"","cluster":"","enabled":true,"external":false,"group":"gnmic-collector","kafka_namespace":"","topic":{"config":{},"name":"gnmic-telemetry","partitions":15,"patternType":"literal","replicas":3},"user":{"mechanism":"scram-sha-512","name":"gnmic"}}` | Requires either a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/, or an external Kafka cluster when kafka.external is true |
 | kafka.bootstrap_server | string | `""` | Kafka Bootstrap address: fqdn + port. eg: kafka-bootstrap.production.svc.cluster.local:9094 |
-| kafka.cluster | string | `""` | The name of the cluster inside the |
-| kafka.enabled | bool | `true` | Enabling this will create the strimzi artefacts to create the kafka objects in K8s. This will also configure the secret reflector so the kafka user secret can be |
+| kafka.cluster | string | `""` | The name of the Strimzi Kafka cluster. Ignored when kafka.external is true |
+| kafka.enabled | bool | `true` | Enabling this will configure gNMIc to output telemetry to Kafka |
+| kafka.external | bool | `false` | When true, connect to an externally managed Kafka cluster instead of a Strimzi-managed one. No KafkaTopic/KafkaUser manifests or kafka_namespace RBAC are created; you must pre-create a Secret named kafka.user.name (key: password) in the release namespace, and the topic must already exist |
 | kafka.group | string | `"gnmic-collector"` | The kafka user group |
-| kafka.kafka_namespace | string | `""` | The namespace where the kafka manifests need to be installed so the operator can create the user topics and rolebindings |
-| kafka.topic | object | `{"config":{},"name":"gnmic-telemetry","partitions":15,"patternType":"literal","replicas":3}` | Kafka topic configuration |
+| kafka.kafka_namespace | string | `""` | The namespace where the kafka manifests need to be installed so the operator can create the user topics and rolebindings. Ignored when kafka.external is true |
+| kafka.topic | object | `{"config":{},"name":"gnmic-telemetry","partitions":15,"patternType":"literal","replicas":3}` | Kafka topic configuration. Ignored when kafka.external is true, the topic must already exist on the external cluster |
 | kafka.topic.config | object | `{}` | Kafka Topic configuration |
 | kafka.topic.name | string | `"gnmic-telemetry"` | Topic name |
 | kafka.topic.partitions | int | `15` | Minumum number of partitions (cruise control may scale to more) |
 | kafka.topic.patternType | string | `"literal"` | Literal or Prefix |
 | kafka.topic.replicas | int | `3` | Minimum number of replicas ( num(replicas) =< num(kafka_nodes) |
 | kafka.user | object | `{"mechanism":"scram-sha-512","name":"gnmic"}` | The kafka user configuration |
+| kafka.user.name | string | `"gnmic"` | Kafka username. When kafka.external is true, this also names the pre-existing Secret (key: password) gNMIc reads the password from |
 | nameOverride | string | `""` | Name override |
 | podAnnotations | object | `{}` | Any extra pod annotations |
 | podLabels | object | `{}` | Any extra pod annotations |
 | podSecurityContext | object | `{}` | The Custom security context written in Yaml |
+| proxy | object | `{"http":"","https":"","noProxy":"127.0.0.1,localhost,.svc,.cluster.local"}` | The proxy environment variables to be injected into the containers |
 | redis | object | `{"enabled":false}` | Optional deployment of redis inside the namespace. This |
 | redis.enabled | bool | `false` | Enable or disable usage of the Bitnami redis |
 | reflector | object | `{"enabled":false}` | Optional deployment of the secret reflector. This is necesarry when running the |

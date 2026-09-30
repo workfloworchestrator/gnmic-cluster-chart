@@ -204,18 +204,20 @@ redis:
 reflector:
   enabled: false
 
-# -- Requires a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/
+# -- Requires either a Strimzi Operator inside the cluster and an active Kafka deployment https://strimzi.io/documentation/, or an external Kafka cluster when kafka.external is true
 kafka:
-  # -- Enabling this will create the strimzi artefacts to create the kafka objects in K8s. This will also configure the secret reflector so the kafka user secret can be
+  # -- Enabling this will configure gNMIc to output telemetry to Kafka
   enabled: true
+  # -- When true, connect to an externally managed Kafka cluster instead of a Strimzi-managed one. No KafkaTopic/KafkaUser manifests or kafka_namespace RBAC are created; you must pre-create a Secret named kafka.user.name (key: password) in the release namespace, and the topic must already exist
+  external: false
   # -- Kafka Bootstrap address: fqdn + port. eg: kafka-bootstrap.production.svc.cluster.local:9094
   bootstrap_server: ""
-  # -- The namespace where the kafka manifests need to be installed so the operator can create the user topics and rolebindings
+  # -- The namespace where the kafka manifests need to be installed so the operator can create the user topics and rolebindings. Ignored when kafka.external is true
   kafka_namespace: ""
-  # -- The name of the cluster inside the
+  # -- The name of the Strimzi Kafka cluster. Ignored when kafka.external is true
   cluster: ""
 
-  # -- Kafka topic configuration
+  # -- Kafka topic configuration. Ignored when kafka.external is true, the topic must already exist on the external cluster
   topic:
     # -- Topic name
     name: gnmic-telemetry
@@ -232,6 +234,7 @@ kafka:
   group: gnmic-collector
   # -- The kafka user configuration
   user:
+    # -- Kafka username. When kafka.external is true, this also names the pre-existing Secret (key: password) gNMIc reads the password from
     name: gnmic
     mechanism: scram-sha-512
 

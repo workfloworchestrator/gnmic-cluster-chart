@@ -16,7 +16,7 @@ subjects:
   name: {{ include "gnmic.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if .Values.kafka.kafka_namespace }}
+{{- if and .Values.kafka.kafka_namespace (not .Values.kafka.external) }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
