@@ -60,3 +60,19 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+API version for the Strimzi (KafkaTopic, KafkaUser) resources.
+The kafka.strimzi.io/v1 API is only served by Strimzi >= 0.49, while older operators serve only
+kafka.strimzi.io/v1beta2, which Strimzi 1.0 removes. Use v1 when the cluster serves it and fall back
+to v1beta2 otherwise, so the chart works on both. When Helm cannot discover the API versions (for
+example with "helm template" without --api-versions) the fallback is v1beta2.
+This can be hard-coded to kafka.strimzi.io/v1 once Strimzi >= 1.0 is everywhere.
+*/}}
+{{- define "gnmic.strimzi.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "kafka.strimzi.io/v1" -}}
+kafka.strimzi.io/v1
+{{- else -}}
+kafka.strimzi.io/v1beta2
+{{- end -}}
+{{- end }}
