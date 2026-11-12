@@ -26,7 +26,7 @@ data:
       api: ":7890"
       clustering:
         cluster-name: {{ $fullName }}-collector
-        leader-wait-timer: 60s
+        leader-wait-timer: {{ .Values.autoscaling.leaderWaitTimer | default "60s" }}
         locker:
           type: consul
           address: {{ $fullName }}-consul-svc:8500
