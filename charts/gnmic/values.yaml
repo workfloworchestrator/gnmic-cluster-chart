@@ -175,6 +175,10 @@ autoscaling:
   enabled: true
   # -- 'consul' or 'k8s'
   locker: consul
+  # -- How long a newly elected leader waits for members to register before it dispatches targets
+  # (gNMIc clustering `leader-wait-timer`, consul locker). Lower values shorten the gap without
+  # targets after a full restart; the first dispatch may then be uneven until a rebalance.
+  leaderWaitTimer: 60s
   # -- Autoscaling lower bound
   minReplicas: 4
   # -- Autoscaling upper bound

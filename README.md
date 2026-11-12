@@ -61,8 +61,9 @@ This chart deploys a gNMIc cluster. This application enables users to stream tel
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity for the k8s scheduler, this is a mapping per collector and relay |
-| autoscaling | object | `{"enabled":true,"locker":"consul","maxReplicas":30,"minReplicas":4,"targetCPUUtilizationPercentage":80}` | Autscaling configuration, enabled by default to maximise the efficiency of collection. |
+| autoscaling | object | `{"enabled":true,"leaderWaitTimer":"60s","locker":"consul","maxReplicas":30,"minReplicas":4,"targetCPUUtilizationPercentage":80}` | Autscaling configuration, enabled by default to maximise the efficiency of collection. |
 | autoscaling.enabled | bool | `true` | Autoscaling enabled |
+| autoscaling.leaderWaitTimer | string | `"60s"` | How long a newly elected leader waits for members to register before it dispatches targets (gNMIc clustering `leader-wait-timer`, consul locker). Lower values shorten the gap without targets after a full restart; the first dispatch may then be uneven until a rebalance. |
 | autoscaling.locker | string | `"consul"` | 'consul' or 'k8s' |
 | autoscaling.maxReplicas | int | `30` | Autoscaling upper bound |
 | autoscaling.minReplicas | int | `4` | Autoscaling lower bound |
